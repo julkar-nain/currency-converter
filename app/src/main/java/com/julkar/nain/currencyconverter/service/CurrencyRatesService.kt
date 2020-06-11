@@ -1,11 +1,9 @@
 package com.julkar.nain.currencyconverter.service
 
-import com.julkar.nain.currencyconverter.dmain.CurrencyRatesResponse
+import com.julkar.nain.currencyconverter.domain.CurrencyRatesResponse
 import io.reactivex.Observable
-import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
-import java.util.*
 
 
 /**

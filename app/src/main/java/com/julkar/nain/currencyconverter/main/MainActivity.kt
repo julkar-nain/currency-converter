@@ -13,11 +13,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.julkar.nain.currencyconverter.R
+import com.julkar.nain.currencyconverter.application.MainApplication
 import com.julkar.nain.currencyconverter.databinding.MainActivityBinding
 import com.julkar.nain.currencyconverter.main.vm.MainViewModel
 import kotlinx.android.synthetic.main.main_activity.*
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), OnItemSelectedListener {
+
+    @Inject
+    lateinit var modelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: MainViewModel
     private lateinit var viewBinding: MainActivityBinding
@@ -26,19 +31,24 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     private lateinit var countryNameFrom: String
     private lateinit var countryNameTo: String
 
-    private val list1 = listOf("USD", "BDT", "INR", "AUD")
-    private val list2 = listOf("USD", "BDT", "INR", "AUD")
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val appComponent = application as MainApplication
+        appComponent.getAppComponent()?.getMainSubComponent()?.create()?.inject(this)
 
         viewBinding = DataBindingUtil.setContentView(this,
             R.layout.main_activity
         )
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this, modelFactory).get(MainViewModel::class.java)
 
-        bindRatesSpinnerTo(list1)
-        bindRatesSpinnerFrom(list2)
+        viewModel.fetchCurrencyData().observe(this,
+            androidx.lifecycle.Observer { list ->
+                list?.let {
+                    bindRatesSpinnerTo(it.keys.toList())
+                    bindRatesSpinnerFrom(it.keys.toList())
+                }
+            })
 
         textChangedListenerTo = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -110,9 +120,9 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (parent?.id == R.id.spinnerTo) {
-            countryNameTo = list1[position]
+            countryNameTo = viewModel.getCurrencyRate(position)
         } else if (parent?.id == R.id.spinnerFrom) {
-            countryNameFrom = list2[position]
+            countryNameFrom = viewModel.getCurrencyRate(position)
         }
         resetInput()
     }
@@ -120,5 +130,10 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     fun resetInput(){
         viewBinding.editTextTo.text = null
         viewBinding.editTextFrom.text = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.dispose()
     }
 }

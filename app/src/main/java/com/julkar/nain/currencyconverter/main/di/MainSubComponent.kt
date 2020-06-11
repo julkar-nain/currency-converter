@@ -9,7 +9,7 @@ import dagger.Subcomponent
  * @since 11 Jun 2020
  */
 @ActivityScope
-@Subcomponent(modules = [MainModule::class])
+@Subcomponent(modules = [MainModule::class ])
 interface MainSubComponent {
 
     fun inject(mainActivity: MainActivity?)

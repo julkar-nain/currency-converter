@@ -1,4 +1,4 @@
-package com.julkar.nain.currencyconverter.dmain
+package com.julkar.nain.currencyconverter.domain
 
 import com.google.gson.annotations.SerializedName
 
@@ -11,5 +11,5 @@ data class CurrencyRatesResponse(
     @SerializedName("terms")val terms: String,
     @SerializedName("privacy")val privacy: String,
     @SerializedName("timestamp")val timestamp: Long,
-    @SerializedName("quotes")val quotes: Map<String, Double>
+    @SerializedName("quotes")val quotes: MutableMap<String, Double>
 )

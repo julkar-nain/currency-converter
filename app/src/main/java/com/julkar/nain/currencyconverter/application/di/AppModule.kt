@@ -2,6 +2,8 @@ package com.julkar.nain.currencyconverter.application.di
 
 import android.app.Application
 import android.content.Context
+import androidx.lifecycle.ViewModelProvider
+import com.julkar.nain.currencyconverter.common.ViewModelFactory
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -17,17 +19,19 @@ import javax.inject.Singleton
 @Module
 class AppModule {
 
-    private val BASE_URL = "http://api.currencylayer.com"
-
-    @Singleton
-    @Provides
-    fun providesContext(application: Application?): Context? {
-        return application
+    companion object{
+        val BASE_URL = "http://api.currencylayer.com"
     }
 
     @Singleton
     @Provides
-    fun providesRetrofit(): Retrofit? {
+    fun providesContext(application: Application?): Context {
+        return application!!
+    }
+
+    @Singleton
+    @Provides
+    fun providesRetrofit(): Retrofit {
         return Retrofit.Builder().baseUrl(BASE_URL)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())

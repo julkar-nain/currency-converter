@@ -1,5 +1,6 @@
 package com.julkar.nain.currencyconverter.main.vm
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,25 +10,31 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class MainViewModel(val currencyRatesService: CurrencyRatesService) : ViewModel() {
+class MainViewModel constructor(private val currencyRatesService: CurrencyRatesService) :
+    ViewModel() {
 
-    private val currencyRates = MutableLiveData<List<String>>()
-    private lateinit var currencyRatesMap: Map<String, Double>
-    private lateinit var compositeDisposable: CompositeDisposable
+    private val TAG = javaClass.toString()
 
-    fun fetchCurrencyData(): LiveData<List<String>> {
+    private val currencyRatesMap = MutableLiveData<Map<String, Double>>()
+    private val compositeDisposable = CompositeDisposable()
+
+    fun fetchCurrencyData(): LiveData<Map<String, Double>> {
         compositeDisposable.add(
             currencyRatesService.getCurrencyRates(ACCESS_KEY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    currencyRatesMap = it.quotes
-                    currencyRates.value = currencyRatesMap.keys.toList()
+                    currencyRatesMap.value = it.quotes.mapKeys { it.key.removeRange(0, 3) }
                 }, {
+                    Log.d(TAG, it.toString())
                 })
         )
 
-        return currencyRates
+        return currencyRatesMap
+    }
+
+    fun getCurrencyRate(position: Int) : String{
+        return currencyRatesMap.value?.keys?.elementAt(position)!!
     }
 
     fun dispose() {
