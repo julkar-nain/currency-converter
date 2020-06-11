@@ -1,4 +1,4 @@
-package com.julkar.nain.currencyconverter.di
+package com.julkar.nain.currencyconverter.application.di
 
 import android.app.Application
 import com.julkar.nain.currencyconverter.application.MainApplication

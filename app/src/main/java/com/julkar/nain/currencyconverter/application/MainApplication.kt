@@ -1,8 +1,8 @@
 package com.julkar.nain.currencyconverter.application
 
 import android.app.Application
-import com.julkar.nain.currencyconverter.di.AppComponent
-import com.julkar.nain.currencyconverter.di.DaggerAppComponent
+import com.julkar.nain.currencyconverter.application.di.AppComponent
+import com.julkar.nain.currencyconverter.application.di.DaggerAppComponent
 
 /**
  * @author Julkar Nain

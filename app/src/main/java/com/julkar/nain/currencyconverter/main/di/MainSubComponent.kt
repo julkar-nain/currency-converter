@@ -1,6 +1,6 @@
 package com.julkar.nain.currencyconverter.main.di
 
-import com.julkar.nain.currencyconverter.di.ActivityScope
+import com.julkar.nain.currencyconverter.application.di.ActivityScope
 import com.julkar.nain.currencyconverter.main.MainActivity
 import dagger.Subcomponent
 
