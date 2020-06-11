@@ -1,7 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity" />
+    tools:context=".MainActivity">
+
+    <Spinner
+        android:id="@+id/spinnerTo"
+        android:layout_width="130dp"
+        android:layout_height="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerviewExchangeRates"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.681"
+        app:layout_constraintStart_toEndOf="@+id/spinnerFrom"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.194" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewExchangeRates"
+        android:layout_width="398dp"
+        android:layout_height="493dp"
+        android:layout_marginTop="220dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.461"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinnerFrom"
+        android:layout_width="130dp"
+        android:layout_height="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerviewExchangeRates"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.135"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.197" />
+
+    <EditText
+        android:id="@+id/editTextFrom"
+        android:layout_width="133dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="From"
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerviewExchangeRates"
+        app:layout_constraintEnd_toStartOf="@+id/editTextTo"
+        app:layout_constraintHorizontal_bias="0.289"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerFrom"
+        app:layout_constraintVertical_bias="0.296" />
+
+    <EditText
+        android:id="@+id/editTextTo"
+        android:layout_width="133dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:ems="10"
+        android:hint="To"
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerviewExchangeRates"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerTo"
+        app:layout_constraintVertical_bias="0.296" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
