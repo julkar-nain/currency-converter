@@ -14,7 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.julkar.nain.currencyconverter.R
 import com.julkar.nain.currencyconverter.databinding.MainActivityBinding
-import com.julkar.nain.currencyconverter.main.ui.MainViewModel
+import com.julkar.nain.currencyconverter.main.vm.MainViewModel
 import kotlinx.android.synthetic.main.main_activity.*
 
 class MainActivity : AppCompatActivity(), OnItemSelectedListener {

@@ -1,4 +1,4 @@
-package com.julkar.nain.currencyconverter.main.ui
+package com.julkar.nain.currencyconverter.main.vm
 
 import androidx.lifecycle.ViewModel
 
