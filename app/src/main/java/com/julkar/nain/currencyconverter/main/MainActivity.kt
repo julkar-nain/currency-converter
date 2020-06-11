@@ -1,4 +1,4 @@
-package com.julkar.nain.currencyconverter
+package com.julkar.nain.currencyconverter.main
 
 import android.os.Bundle
 import android.text.Editable
@@ -12,8 +12,9 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.julkar.nain.currencyconverter.R
 import com.julkar.nain.currencyconverter.databinding.MainActivityBinding
-import com.julkar.nain.currencyconverter.ui.MainViewModel
+import com.julkar.nain.currencyconverter.main.ui.MainViewModel
 import kotlinx.android.synthetic.main.main_activity.*
 
 class MainActivity : AppCompatActivity(), OnItemSelectedListener {
@@ -31,7 +32,9 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewBinding = DataBindingUtil.setContentView(this, R.layout.main_activity)
+        viewBinding = DataBindingUtil.setContentView(this,
+            R.layout.main_activity
+        )
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         bindRatesSpinnerTo(list1)
