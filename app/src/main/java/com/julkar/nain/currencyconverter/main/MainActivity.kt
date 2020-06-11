@@ -17,6 +17,7 @@ import com.julkar.nain.currencyconverter.application.MainApplication
 import com.julkar.nain.currencyconverter.databinding.MainActivityBinding
 import com.julkar.nain.currencyconverter.main.vm.MainViewModel
 import kotlinx.android.synthetic.main.main_activity.*
+import java.text.DecimalFormat
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), OnItemSelectedListener {
@@ -37,7 +38,8 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         val appComponent = application as MainApplication
         appComponent.getAppComponent()?.getMainSubComponent()?.create()?.inject(this)
 
-        viewBinding = DataBindingUtil.setContentView(this,
+        viewBinding = DataBindingUtil.setContentView(
+            this,
             R.layout.main_activity
         )
         viewModel = ViewModelProvider(this, modelFactory).get(MainViewModel::class.java)
@@ -84,15 +86,32 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     }
 
     private fun convertRates(edtFrom: EditText, edtTo: EditText, listener: TextWatcher) {
-        val amountFrom = edtFrom.text.toString().toDoubleOrNull()
+        val amountFrom = edtFrom.text.toString().replace(",", "").toDoubleOrNull()
 
         amountFrom?.let {
-            edtTo.removeTextChangedListener(getOtherListener(listener))
-            //            edtTo.text = viewModel.getConvertedRates(from, to, amount)
-            edtTo.setText(amountFrom.toString())
-            edtTo.setSelection(edtTo.text.length) //moves the pointer to end
-            edtTo.addTextChangedListener(getOtherListener(listener))
-        }?: if(!TextUtils.isEmpty(editTextTo.text)){edtTo.setText("")}
+            updateCurrencyToInputField(edtFrom, amountFrom, "#,###", listener)
+            updateCurrencyToInputField(
+                edtTo, viewModel.getExchangedAmount(
+                    amountFrom.toString().toDouble(),
+                    from = countryNameFrom,
+                    to = countryNameTo
+                ), "#,###.00", getOtherListener(listener)
+            )
+        } ?: if (!TextUtils.isEmpty(edtTo.text)) {
+            edtTo.setText("")
+        }
+    }
+
+    private fun updateCurrencyToInputField(
+        editText: EditText,
+        amount: Double,
+        format: String,
+        listener: TextWatcher
+    ) {
+        editText.removeTextChangedListener(listener)
+        editText.setText(DecimalFormat(format).format(amount).toString())
+        editText.setSelection(editText.text.length)
+        editText.addTextChangedListener(listener)
     }
 
     private fun getOtherListener(listener: TextWatcher): TextWatcher {
@@ -127,7 +146,7 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         resetInput()
     }
 
-    fun resetInput(){
+    fun resetInput() {
         viewBinding.editTextTo.text = null
         viewBinding.editTextFrom.text = null
     }

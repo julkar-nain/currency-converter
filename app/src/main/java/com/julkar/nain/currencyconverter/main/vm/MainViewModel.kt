@@ -14,6 +14,7 @@ class MainViewModel constructor(private val currencyRatesService: CurrencyRatesS
     ViewModel() {
 
     private val TAG = javaClass.toString()
+    private val KEY_USA = "USA"
 
     private val currencyRatesMap = MutableLiveData<Map<String, Double>>()
     private val compositeDisposable = CompositeDisposable()
@@ -24,7 +25,9 @@ class MainViewModel constructor(private val currencyRatesService: CurrencyRatesS
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    currencyRatesMap.value = it.quotes.mapKeys { it.key.removeRange(0, 3) }
+                    val map = it.quotes
+                    map[KEY_USA] = 1.0
+                    currencyRatesMap.value = map.mapKeys { it.key.removeRange(0, 3) }
                 }, {
                     Log.d(TAG, it.toString())
                 })
@@ -33,8 +36,14 @@ class MainViewModel constructor(private val currencyRatesService: CurrencyRatesS
         return currencyRatesMap
     }
 
-    fun getCurrencyRate(position: Int) : String{
+    fun getCurrencyRate(position: Int): String {
         return currencyRatesMap.value?.keys?.elementAt(position)!!
+    }
+
+    fun getExchangedAmount(unExchanged: Double, from: String, to: String): Double {
+        val exchangedAmount = (1 /currencyRatesMap.value!![from]!!) * currencyRatesMap.value!![to]!! * unExchanged
+
+        return exchangedAmount
     }
 
     fun dispose() {
