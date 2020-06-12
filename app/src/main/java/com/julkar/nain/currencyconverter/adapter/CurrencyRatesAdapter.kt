@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.julkar.nain.currencyconverter.R
+import kotlinx.android.synthetic.main.list_item.view.*
 import kotlinx.android.synthetic.main.main_activity.view.*
 
 /**
@@ -23,7 +24,7 @@ class CurrencyRatesAdapter : RecyclerView.Adapter<CurrencyRatesAdapter.ViewHolde
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(android.R.layout.simple_list_item_1, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -36,6 +37,6 @@ class CurrencyRatesAdapter : RecyclerView.Adapter<CurrencyRatesAdapter.ViewHolde
     }
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
-        val text = view.findViewById<TextView>(android.R.id.text1)
+        val text = view.rates
     }
 }

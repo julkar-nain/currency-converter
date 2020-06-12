@@ -2,6 +2,7 @@ package com.julkar.nain.currencyconverter.main.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.julkar.nain.currencyconverter.adapter.CurrencyRatesAdapter
 import com.julkar.nain.currencyconverter.application.di.ActivityScope
 import com.julkar.nain.currencyconverter.common.ViewModelFactory
 import com.julkar.nain.currencyconverter.common.vm.ViewModelKey
@@ -38,5 +39,11 @@ class MainModule {
     @Provides
     fun providesViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory {
         return factory
+    }
+
+    @ActivityScope
+    @Provides
+    fun providesAdapter(): CurrencyRatesAdapter{
+        return CurrencyRatesAdapter()
     }
 }

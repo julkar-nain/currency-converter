@@ -12,7 +12,10 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
 import com.julkar.nain.currencyconverter.R
+import com.julkar.nain.currencyconverter.adapter.CurrencyRatesAdapter
 import com.julkar.nain.currencyconverter.application.MainApplication
 import com.julkar.nain.currencyconverter.databinding.MainActivityBinding
 import com.julkar.nain.currencyconverter.main.vm.MainViewModel
@@ -20,10 +23,14 @@ import kotlinx.android.synthetic.main.main_activity.*
 import java.text.DecimalFormat
 import javax.inject.Inject
 
+
 class MainActivity : AppCompatActivity(), OnItemSelectedListener {
 
     @Inject
     lateinit var modelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var adapter: CurrencyRatesAdapter
 
     private lateinit var viewModel: MainViewModel
     private lateinit var viewBinding: MainActivityBinding
@@ -47,8 +54,10 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         viewModel.fetchCurrencyData().observe(this,
             androidx.lifecycle.Observer { list ->
                 list?.let {
-                    bindRatesSpinnerTo(it.keys.toList())
-                    bindRatesSpinnerFrom(it.keys.toList())
+                    val list = it.keys.toList()
+                    bindRatesSpinnerTo(list)
+                    bindRatesSpinnerFrom(list)
+                    adapter.updateList(list)
                 }
             })
 
@@ -73,6 +82,8 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         }
         viewBinding.editTextFrom.addTextChangedListener(textChangedListenerFrom)
         viewBinding.editTextTo.addTextChangedListener(textChangedListenerTo)
+
+        setupCurrencyRatesRecyclerview()
     }
 
     fun bindRatesSpinnerTo(list: List<String>) {
@@ -120,6 +131,11 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         }
 
         return textChangedListenerTo
+    }
+
+    private fun setupCurrencyRatesRecyclerview(){
+        viewBinding.recyclerviewExchangeRates.layoutManager = GridLayoutManager(this, 2)
+        viewBinding.recyclerviewExchangeRates.adapter = adapter
     }
 
     private fun getSpinnerAdapter(list: List<String>): ArrayAdapter<String> {
