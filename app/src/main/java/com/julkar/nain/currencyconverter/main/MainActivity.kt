@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
                     val list = it.keys.toList()
                     bindRatesSpinnerTo(list)
                     bindRatesSpinnerFrom(list)
-                    adapter.updateList(list)
+                    adapter.updateList(viewModel.getExchangeRates())
                 }
             })
 

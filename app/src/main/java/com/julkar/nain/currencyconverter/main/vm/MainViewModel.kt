@@ -9,6 +9,7 @@ import com.julkar.nain.currencyconverter.util.Constants.ACCESS_KEY
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.text.DecimalFormat
 
 class MainViewModel constructor(private val currencyRatesService: CurrencyRatesService) :
     ViewModel() {
@@ -41,9 +42,14 @@ class MainViewModel constructor(private val currencyRatesService: CurrencyRatesS
     }
 
     fun getExchangedAmount(unExchanged: Double, from: String, to: String): Double {
-        val exchangedAmount = (1 /currencyRatesMap.value!![from]!!) * currencyRatesMap.value!![to]!! * unExchanged
+        val exchangedAmount =
+            (1 / currencyRatesMap.value!![from]!!) * currencyRatesMap.value!![to]!! * unExchanged
 
         return exchangedAmount
+    }
+
+    fun getExchangeRates(): List<String> {
+        return currencyRatesMap.value?.map { it.key + " : "+DecimalFormat("000.00").format(it.value) }?.toList()!!
     }
 
     fun dispose() {
