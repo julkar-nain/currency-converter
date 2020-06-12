@@ -2,8 +2,8 @@ package com.julkar.nain.currencyconverter.application.di
 
 import android.app.Application
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
-import com.julkar.nain.currencyconverter.common.ViewModelFactory
+import androidx.room.Room
+import com.julkar.nain.currencyconverter.database.AppDatabase
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -36,5 +36,12 @@ class AppModule {
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+
+    @Singleton
+    @Provides
+    fun providesAppDatabase(application: Application?): AppDatabase {
+            return Room.databaseBuilder<AppDatabase>(application!!, AppDatabase::class.java, "app-database")
+                .build()
     }
 }

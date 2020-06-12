@@ -11,5 +11,5 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "exchange_rate_table")
 class ExchangeRate(
     @PrimaryKey @ColumnInfo(name = "country_name") val countryName: String,
-    @ColumnInfo(name = "exchange_rate") val exchangeRate: String
+    @ColumnInfo(name = "exchange_rate") val exchangeRate: Double
 )

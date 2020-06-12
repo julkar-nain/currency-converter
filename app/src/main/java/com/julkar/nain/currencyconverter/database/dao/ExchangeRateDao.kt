@@ -1,9 +1,12 @@
 package com.julkar.nain.currencyconverter.database.dao
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.room.*
 import com.julkar.nain.currencyconverter.database.entity.ExchangeRate
-
-
+import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.Single
 
 
 /**
@@ -13,13 +16,13 @@ import com.julkar.nain.currencyconverter.database.entity.ExchangeRate
 @Dao
 interface ExchangeRateDao {
     @Query("SELECT * from exchange_rate_table")
-    fun getExchangeRates(): List<ExchangeRate>
+    suspend fun getExchangeRates(): List<ExchangeRate>
 
     @Query("SELECT country_name FROM exchange_rate_table")
-    fun getCountriesName(): List<String>
+    fun getCountriesName(): LiveData<List<String>>
 
     @Query("SELECT * FROM exchange_rate_table WHERE country_name = :countryName")
-    fun findExchangeRateByCountryName(countryName: String): ExchangeRate
+    fun findExchangeRateByCountryName(countryName: String): LiveData<ExchangeRate>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(exchangeRates: List<ExchangeRate>)

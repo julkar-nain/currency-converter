@@ -2,6 +2,7 @@ package com.julkar.nain.currencyconverter.service
 
 import com.julkar.nain.currencyconverter.domain.CurrencyRatesResponse
 import io.reactivex.Observable
+import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -12,5 +13,5 @@ import retrofit2.http.Query
  */
 interface CurrencyRatesService {
     @GET("/live")
-    fun getCurrencyRates(@Query("access_key") accessKey: String): Observable<CurrencyRatesResponse>
+    fun getCurrencyRates(@Query("access_key") accessKey: String): Single<CurrencyRatesResponse>
 }

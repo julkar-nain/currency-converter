@@ -6,7 +6,11 @@ import com.julkar.nain.currencyconverter.adapter.CurrencyRatesAdapter
 import com.julkar.nain.currencyconverter.application.di.ActivityScope
 import com.julkar.nain.currencyconverter.common.ViewModelFactory
 import com.julkar.nain.currencyconverter.common.vm.ViewModelKey
+import com.julkar.nain.currencyconverter.database.AppDatabase
+import com.julkar.nain.currencyconverter.database.dao.ExchangeRateDao
 import com.julkar.nain.currencyconverter.main.vm.MainViewModel
+import com.julkar.nain.currencyconverter.repository.ExchangeRateNetworkDataSource
+import com.julkar.nain.currencyconverter.repository.ExchangeRatePersistentDataSource
 import com.julkar.nain.currencyconverter.service.CurrencyRatesService
 import dagger.Module
 import dagger.Provides
@@ -31,8 +35,11 @@ class MainModule {
     @IntoMap
     @ViewModelKey(MainViewModel::class)
     @Provides
-    fun providesMainViewModel(currencyRatesService: CurrencyRatesService): ViewModel {
-        return MainViewModel(currencyRatesService)
+    fun providesMainViewModel(
+        exchangeRateNetworkDataSource: ExchangeRateNetworkDataSource,
+        exchangeRatePersistentDataSource: ExchangeRatePersistentDataSource
+    ): ViewModel {
+        return MainViewModel(exchangeRateNetworkDataSource, exchangeRatePersistentDataSource)
     }
 
     @ActivityScope
@@ -45,5 +52,11 @@ class MainModule {
     @Provides
     fun providesAdapter(): CurrencyRatesAdapter{
         return CurrencyRatesAdapter()
+    }
+
+    @ActivityScope
+    @Provides
+    fun providesExchangeRateDao(appDatabase: AppDatabase): ExchangeRateDao{
+        return appDatabase.exchangeRateDao()
     }
 }
