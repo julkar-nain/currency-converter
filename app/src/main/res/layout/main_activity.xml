@@ -4,6 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".main.MainActivity">
 
+<!--    <data>-->
+<!--        <variable-->
+<!--            name="vm"-->
+<!--            type="com.julkar.nain.currencyconverter.main.vm.MainViewModel" />-->
+<!--    </data>-->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,8 +28,8 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_margin="8dp"
+                android:layout_weight="1"
                 app:cardElevation="2dp">
 
                 <LinearLayout
@@ -37,16 +43,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:dropDownHeight="100dp"/>
+                        android:dropDownHeight="100dp" />
 
                     <EditText
-                        android:id="@+id/editTextTo"
+                        android:id="@+id/editTextFrom"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="To"
+                        android:digits="0,1,2,3,4,5,6,7,8,9"
+                        android:hint="From"
                         android:inputType="textMultiLine|numberDecimal"
-                        android:maxLines="3"
-                        android:digits="0,1,2,3,4,5,6,7,8,9" />
+                        android:maxLines="3" />
 
                 </LinearLayout>
 
@@ -72,13 +78,13 @@
                         android:layout_marginBottom="8dp" />
 
                     <EditText
-                        android:id="@+id/editTextFrom"
+                        android:id="@+id/editTextTo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="From"
+                        android:digits="0,1,2,3,4,5,6,7,8,9"
+                        android:hint="To"
                         android:inputType="textMultiLine|numberDecimal"
-                        android:maxLines="3"
-                        android:digits="0,1,2,3,4,5,6,7,8,9" />
+                        android:maxLines="3" />
 
                 </LinearLayout>
 

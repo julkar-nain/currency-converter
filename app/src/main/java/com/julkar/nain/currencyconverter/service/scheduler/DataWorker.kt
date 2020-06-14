@@ -10,7 +10,7 @@ import com.julkar.nain.currencyconverter.database.entity.ExchangeRate
 import com.julkar.nain.currencyconverter.repository.ExchangeRateNetworkDataSource
 import com.julkar.nain.currencyconverter.repository.ExchangeRatePersistentDataSource
 import com.julkar.nain.currencyconverter.service.Communicator.Communicator
-import com.julkar.nain.currencyconverter.util.KEY_USA
+import com.julkar.nain.currencyconverter.util.Utils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -36,7 +36,10 @@ class DataWorker(val appContext: Context, params: WorkerParameters) :
 
     @Inject
     lateinit var communicator: Communicator
-    
+
+    @Inject
+    lateinit var utils: Utils
+
     private val compositeDisposable = CompositeDisposable()
 
 
@@ -69,12 +72,8 @@ class DataWorker(val appContext: Context, params: WorkerParameters) :
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    val map = it.quotes
-                    map[KEY_USA] = 1.0
-                    val formattedMap = map.mapKeys { it.key.removeRange(0, 3) }
-
+                    val formattedMap = utils.prepareFormattedData(it.quotes)
                     communicator.emit(formattedMap)
-
                     saveExchangeRates(formattedMap)
                 }, {
                     Toast.makeText(

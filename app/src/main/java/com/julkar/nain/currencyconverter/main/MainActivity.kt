@@ -1,8 +1,6 @@
 package com.julkar.nain.currencyconverter.main
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -13,26 +11,16 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.julkar.nain.currencyconverter.R
 import com.julkar.nain.currencyconverter.adapter.CurrencyRatesAdapter
 import com.julkar.nain.currencyconverter.application.MainApplication
 import com.julkar.nain.currencyconverter.databinding.MainActivityBinding
 import com.julkar.nain.currencyconverter.main.vm.MainViewModel
-import com.julkar.nain.currencyconverter.service.scheduler.DataWorker
-import io.reactivex.internal.operators.observable.ObservableObserveOn
+import com.julkar.nain.currencyconverter.util.view.TextChangeWatcher
 import kotlinx.android.synthetic.main.main_activity.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.text.DecimalFormat
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -48,8 +36,8 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     private lateinit var viewBinding: MainActivityBinding
     private lateinit var textChangedListenerTo: TextWatcher
     private lateinit var textChangedListenerFrom: TextWatcher
-    private lateinit var countryNameFrom: String
-    private lateinit var countryNameTo: String
+    private var countryNameFrom: String = "USD"
+    private var countryNameTo: String = "USD"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +49,10 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
             this,
             R.layout.main_activity
         )
+
         viewModel = ViewModelProvider(this, modelFactory).get(MainViewModel::class.java)
+
+//        viewBinding.vm = viewModel
 
         viewModel.fetchCurrencyData().observe(this,
             androidx.lifecycle.Observer { list ->
@@ -73,24 +64,16 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
                 }
             })
 
-        textChangedListenerTo = object : TextWatcher {
+        textChangedListenerTo = object : TextWatcher by TextChangeWatcher {
             override fun afterTextChanged(s: Editable?) {
-                convertRates(edtFrom = editTextTo, edtTo = editTextFrom, listener = this)
+                convertRates(editTextTo, editTextFrom, s.toString(),countryNameTo, countryNameFrom, this)
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         }
 
-        textChangedListenerFrom = object : TextWatcher {
+        textChangedListenerFrom = object : TextWatcher by TextChangeWatcher{
             override fun afterTextChanged(s: Editable?) {
-                convertRates(edtFrom = editTextFrom, edtTo = editTextTo, listener = this)
+                convertRates(editTextFrom, editTextTo, s.toString(),countryNameFrom, countryNameTo, this)
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         }
         viewBinding.editTextFrom.addTextChangedListener(textChangedListenerFrom)
         viewBinding.editTextTo.addTextChangedListener(textChangedListenerTo)
@@ -108,16 +91,22 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         viewBinding.spinnerFrom.onItemSelectedListener = this
     }
 
-    private fun convertRates(edtFrom: EditText, edtTo: EditText, listener: TextWatcher) {
-        val amountFrom = edtFrom.text.toString().replace(",", "").toDoubleOrNull()
+    private fun convertRates(edtFrom: EditText, edtTo: EditText, amountText: String,
+                             nameFrom: String, nameTo:String, listener: TextWatcher) {
+        val amountFrom = amountText.replace(",", "").toDoubleOrNull()
 
         amountFrom?.let {
-            updateCurrencyToInputField(edtFrom, amountFrom, "#,###", listener)
+            updateCurrencyToInputField(
+                edtFrom,
+                amountFrom,
+                "#,###",
+                listener
+            )
             updateCurrencyToInputField(
                 edtTo, viewModel.getExchangedAmount(
                     amountFrom.toString().toDouble(),
-                    from = countryNameFrom,
-                    to = countryNameTo
+                    from = nameFrom,
+                    to = nameTo
                 ), "#,###.00", getOtherListener(listener)
             )
         } ?: if (!TextUtils.isEmpty(edtTo.text)) {
@@ -125,12 +114,7 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         }
     }
 
-    private fun updateCurrencyToInputField(
-        editText: EditText,
-        amount: Double,
-        format: String,
-        listener: TextWatcher
-    ) {
+    private fun updateCurrencyToInputField(editText: EditText, amount: Double, format: String, listener: TextWatcher) {
         editText.removeTextChangedListener(listener)
         editText.setText(DecimalFormat(format).format(amount).toString())
         editText.setSelection(editText.text.length)
@@ -156,7 +140,6 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
             , android.R.layout.simple_spinner_item
             , list
         )
-
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         return adapter
