@@ -1,6 +1,8 @@
 package com.julkar.nain.currencyconverter.main
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -11,16 +13,26 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.julkar.nain.currencyconverter.R
 import com.julkar.nain.currencyconverter.adapter.CurrencyRatesAdapter
 import com.julkar.nain.currencyconverter.application.MainApplication
 import com.julkar.nain.currencyconverter.databinding.MainActivityBinding
 import com.julkar.nain.currencyconverter.main.vm.MainViewModel
+import com.julkar.nain.currencyconverter.service.scheduler.DataWorker
+import io.reactivex.internal.operators.observable.ObservableObserveOn
 import kotlinx.android.synthetic.main.main_activity.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.DecimalFormat
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -133,7 +145,7 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         return textChangedListenerTo
     }
 
-    private fun setupCurrencyRatesRecyclerview(){
+    private fun setupCurrencyRatesRecyclerview() {
         viewBinding.recyclerviewExchangeRates.layoutManager = GridLayoutManager(this, 2)
         viewBinding.recyclerviewExchangeRates.adapter = adapter
     }
@@ -162,7 +174,7 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         resetInput()
     }
 
-    fun resetInput() {
+    private fun resetInput() {
         viewBinding.editTextTo.text = null
         viewBinding.editTextFrom.text = null
     }

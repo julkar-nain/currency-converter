@@ -1,35 +1,52 @@
 package com.julkar.nain.currencyconverter.main.vm
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.julkar.nain.currencyconverter.database.entity.ExchangeRate
-import com.julkar.nain.currencyconverter.repository.ExchangeRateNetworkDataSource
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.julkar.nain.currencyconverter.repository.ExchangeRatePersistentDataSource
-import io.reactivex.android.schedulers.AndroidSchedulers
+import com.julkar.nain.currencyconverter.service.Communicator.Communicator
+import com.julkar.nain.currencyconverter.service.scheduler.DataWorker
+import com.julkar.nain.currencyconverter.util.WORK_NAME
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
+import java.util.concurrent.TimeUnit
 
 class MainViewModel constructor(
-    private val exchangeRateNetworkDataSource: ExchangeRateNetworkDataSource,
+    private val appContext: Context,
+    communicator: Communicator,
     private val exchangeRatePersistentDataSource: ExchangeRatePersistentDataSource
 ) :
     ViewModel() {
 
     private val TAG = javaClass.toString()
-    private val KEY_USA = "USDUSD"
 
     private val currencyRatesMap = MutableLiveData<Map<String, Double>>()
     private val compositeDisposable = CompositeDisposable()
 
+    init {
+        communicator.observe(Map::class.java).subscribe {
+            try {
+                val map = it as Map<String, Double>
+                currencyRatesMap.postValue(map)
+            } catch (e: Exception) {
+                Log.v(TAG, e.toString())
+            }
+        }
+        registerScheduler()
+    }
+
     fun fetchCurrencyData(): LiveData<Map<String, Double>> {
         viewModelScope.launch(Dispatchers.IO) {
-            val rates =  exchangeRatePersistentDataSource.getExchangeRates()
+            val rates = exchangeRatePersistentDataSource.getExchangeRates()
             currencyRatesMap.postValue(rates.map { it.countryName to it.exchangeRate }.toMap())
         }
 
@@ -52,31 +69,27 @@ class MainViewModel constructor(
             ?.toList()!!
     }
 
-    fun saveExchangeRates(ratesMap: Map<String, Double>) = viewModelScope.launch(Dispatchers.IO) {
-        val rateList = ratesMap.map {
-            ExchangeRate(it.key, it.value)
-        }.toList()
-
-        exchangeRatePersistentDataSource.saveExchangeRates(rateList)
-    }
-
-    fun fetchNetworkData() {
-        compositeDisposable.add(
-            exchangeRateNetworkDataSource.getExchangeRates()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    val map = it.quotes
-                    map[KEY_USA] = 1.0
-                    val formattedMap = map.mapKeys { it.key.removeRange(0, 3) }
-                    saveExchangeRates(formattedMap)
-                }, {
-                    Log.d(TAG, it.toString())
-                })
-        )
+    fun registerScheduler() {
+        CoroutineScope(Dispatchers.IO).launch {
+            setupRecurringWork()
+        }
     }
 
     fun dispose() {
         compositeDisposable.dispose()
+        WorkManager.getInstance(appContext).cancelUniqueWork(WORK_NAME)
+    }
+
+    private fun setupRecurringWork() {
+        val repeatingRequest = PeriodicWorkRequestBuilder<DataWorker>(
+            repeatInterval = 30,
+            repeatIntervalTimeUnit = TimeUnit.SECONDS
+        ).build()
+
+        WorkManager.getInstance(appContext).enqueueUniquePeriodicWork(
+            WORK_NAME,
+            ExistingPeriodicWorkPolicy.REPLACE,
+            repeatingRequest
+        )
     }
 }

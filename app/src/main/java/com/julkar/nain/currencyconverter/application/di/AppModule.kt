@@ -4,12 +4,14 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.julkar.nain.currencyconverter.database.AppDatabase
+import com.julkar.nain.currencyconverter.service.Communicator.Communicator
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
+import com.julkar.nain.currencyconverter.service.Communicator.CommunicatorImp as CommunicatorImp1
 
 
 /**
@@ -44,4 +46,8 @@ class AppModule {
             return Room.databaseBuilder<AppDatabase>(application!!, AppDatabase::class.java, "app-database")
                 .build()
     }
+
+    @Singleton
+    @Provides
+    fun providesCommunicator(): Communicator = CommunicatorImp1()
 }

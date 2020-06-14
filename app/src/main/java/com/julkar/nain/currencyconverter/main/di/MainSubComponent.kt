@@ -2,6 +2,7 @@ package com.julkar.nain.currencyconverter.main.di
 
 import com.julkar.nain.currencyconverter.application.di.ActivityScope
 import com.julkar.nain.currencyconverter.main.MainActivity
+import com.julkar.nain.currencyconverter.service.scheduler.DataWorker
 import dagger.Subcomponent
 
 /**
@@ -13,6 +14,7 @@ import dagger.Subcomponent
 interface MainSubComponent {
 
     fun inject(mainActivity: MainActivity?)
+    fun inject(worker: DataWorker)
 
     @Subcomponent.Factory
     interface Factory {

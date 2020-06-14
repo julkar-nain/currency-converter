@@ -1,5 +1,6 @@
 package com.julkar.nain.currencyconverter.main.di
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.julkar.nain.currencyconverter.adapter.CurrencyRatesAdapter
@@ -11,6 +12,7 @@ import com.julkar.nain.currencyconverter.database.dao.ExchangeRateDao
 import com.julkar.nain.currencyconverter.main.vm.MainViewModel
 import com.julkar.nain.currencyconverter.repository.ExchangeRateNetworkDataSource
 import com.julkar.nain.currencyconverter.repository.ExchangeRatePersistentDataSource
+import com.julkar.nain.currencyconverter.service.Communicator.Communicator
 import com.julkar.nain.currencyconverter.service.CurrencyRatesService
 import dagger.Module
 import dagger.Provides
@@ -36,10 +38,11 @@ class MainModule {
     @ViewModelKey(MainViewModel::class)
     @Provides
     fun providesMainViewModel(
-        exchangeRateNetworkDataSource: ExchangeRateNetworkDataSource,
+        context: Context,
+        communicator: Communicator,
         exchangeRatePersistentDataSource: ExchangeRatePersistentDataSource
     ): ViewModel {
-        return MainViewModel(exchangeRateNetworkDataSource, exchangeRatePersistentDataSource)
+        return MainViewModel(context, communicator, exchangeRatePersistentDataSource)
     }
 
     @ActivityScope
