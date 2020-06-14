@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.julkar.nain.currencyconverter.database.dao.ExchangeRateDao
 import com.julkar.nain.currencyconverter.database.entity.ExchangeRate
-import com.julkar.nain.currencyconverter.util.Constants.DATABASE_VERSION
+import com.julkar.nain.currencyconverter.util.DATABASE_VERSION
 
 /**
  * @author Julkar Nain
