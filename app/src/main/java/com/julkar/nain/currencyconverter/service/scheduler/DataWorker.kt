@@ -10,6 +10,7 @@ import com.julkar.nain.currencyconverter.database.entity.ExchangeRate
 import com.julkar.nain.currencyconverter.repository.ExchangeRateNetworkDataSource
 import com.julkar.nain.currencyconverter.repository.ExchangeRatePersistentDataSource
 import com.julkar.nain.currencyconverter.service.Communicator.Communicator
+import com.julkar.nain.currencyconverter.util.KEY_USA
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -25,6 +26,8 @@ import javax.inject.Inject
 class DataWorker(val appContext: Context, params: WorkerParameters) :
     Worker(appContext, params) {
 
+    private val TAG = javaClass.name
+
     @Inject
     lateinit var exchangeRateNetworkDataSource: ExchangeRateNetworkDataSource
 
@@ -33,14 +36,13 @@ class DataWorker(val appContext: Context, params: WorkerParameters) :
 
     @Inject
     lateinit var communicator: Communicator
+    
     private val compositeDisposable = CompositeDisposable()
-    private val KEY_USA = "USDUSD"
 
-    private val TAG = javaClass.name
 
     init {
         val application = appContext.applicationContext as MainApplication
-        application.getAppComponent()?.getMainSubComponent()?.create()?.inject(this)
+        application.getAppComponent()?.inject(this)
     }
 
     override fun doWork(): Result {

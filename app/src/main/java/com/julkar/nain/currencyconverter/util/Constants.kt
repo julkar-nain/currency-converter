@@ -13,3 +13,4 @@ const val ACCESS_KEY = "20f4dfdb79d18438565a696afae3f140"
 
 //scheduler
 const val WORK_NAME = "com.julkar.nain.currencyconverter.service.scheduler.DataWorker"
+const val KEY_USA = "USDUSD"

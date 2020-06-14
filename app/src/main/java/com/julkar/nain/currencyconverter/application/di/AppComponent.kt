@@ -16,7 +16,9 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [AppModule::class])
 interface AppComponent {
+
     fun inject(mainApplication: MainApplication)
+    fun inject(worker: DataWorker)
     fun getMainSubComponent(): MainSubComponent.Factory?
 
     @Component.Factory

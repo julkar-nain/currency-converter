@@ -7,17 +7,12 @@ import com.julkar.nain.currencyconverter.adapter.CurrencyRatesAdapter
 import com.julkar.nain.currencyconverter.application.di.ActivityScope
 import com.julkar.nain.currencyconverter.common.ViewModelFactory
 import com.julkar.nain.currencyconverter.common.vm.ViewModelKey
-import com.julkar.nain.currencyconverter.database.AppDatabase
-import com.julkar.nain.currencyconverter.database.dao.ExchangeRateDao
 import com.julkar.nain.currencyconverter.main.vm.MainViewModel
-import com.julkar.nain.currencyconverter.repository.ExchangeRateNetworkDataSource
 import com.julkar.nain.currencyconverter.repository.ExchangeRatePersistentDataSource
 import com.julkar.nain.currencyconverter.service.Communicator.Communicator
-import com.julkar.nain.currencyconverter.service.CurrencyRatesService
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import retrofit2.Retrofit
 
 
 /**
@@ -26,12 +21,6 @@ import retrofit2.Retrofit
  */
 @Module
 class MainModule {
-
-    @ActivityScope
-    @Provides
-    fun provideRetrofitService(retrofit: Retrofit): CurrencyRatesService {
-        return retrofit.create<CurrencyRatesService>(CurrencyRatesService::class.java)
-    }
 
     @ActivityScope
     @IntoMap
@@ -53,13 +42,7 @@ class MainModule {
 
     @ActivityScope
     @Provides
-    fun providesAdapter(): CurrencyRatesAdapter{
+    fun providesAdapter(): CurrencyRatesAdapter {
         return CurrencyRatesAdapter()
-    }
-
-    @ActivityScope
-    @Provides
-    fun providesExchangeRateDao(appDatabase: AppDatabase): ExchangeRateDao{
-        return appDatabase.exchangeRateDao()
     }
 }

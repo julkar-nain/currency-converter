@@ -4,7 +4,9 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.julkar.nain.currencyconverter.database.AppDatabase
+import com.julkar.nain.currencyconverter.database.dao.ExchangeRateDao
 import com.julkar.nain.currencyconverter.service.Communicator.Communicator
+import com.julkar.nain.currencyconverter.service.CurrencyRatesService
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -45,6 +47,18 @@ class AppModule {
     fun providesAppDatabase(application: Application?): AppDatabase {
             return Room.databaseBuilder<AppDatabase>(application!!, AppDatabase::class.java, "app-database")
                 .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRetrofitService(retrofit: Retrofit): CurrencyRatesService {
+        return retrofit.create<CurrencyRatesService>(CurrencyRatesService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesExchangeRateDao(appDatabase: AppDatabase): ExchangeRateDao {
+        return appDatabase.exchangeRateDao()
     }
 
     @Singleton

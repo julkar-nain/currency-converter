@@ -14,7 +14,6 @@ import dagger.Subcomponent
 interface MainSubComponent {
 
     fun inject(mainActivity: MainActivity?)
-    fun inject(worker: DataWorker)
 
     @Subcomponent.Factory
     interface Factory {
