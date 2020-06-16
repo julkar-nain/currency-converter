@@ -2,7 +2,6 @@ package com.julkar.nain.currencyconverter.main
 
 import android.os.Bundle
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
@@ -11,6 +10,7 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.julkar.nain.currencyconverter.R
@@ -18,9 +18,9 @@ import com.julkar.nain.currencyconverter.adapter.CurrencyRatesAdapter
 import com.julkar.nain.currencyconverter.application.MainApplication
 import com.julkar.nain.currencyconverter.databinding.MainActivityBinding
 import com.julkar.nain.currencyconverter.main.vm.MainViewModel
+import com.julkar.nain.currencyconverter.util.Action
 import com.julkar.nain.currencyconverter.util.view.TextChangeWatcher
 import kotlinx.android.synthetic.main.main_activity.*
-import java.text.DecimalFormat
 import javax.inject.Inject
 
 
@@ -36,8 +36,6 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     private lateinit var viewBinding: MainActivityBinding
     private lateinit var textChangedListenerTo: TextWatcher
     private lateinit var textChangedListenerFrom: TextWatcher
-    private var countryNameFrom: String = "USD"
-    private var countryNameTo: String = "USD"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,10 +50,8 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
 
         viewModel = ViewModelProvider(this, modelFactory).get(MainViewModel::class.java)
 
-//        viewBinding.vm = viewModel
-
         viewModel.fetchCurrencyData().observe(this,
-            androidx.lifecycle.Observer { list ->
+            Observer { list ->
                 list?.let {
                     val list = it.keys.toList()
                     bindRatesSpinnerTo(list)
@@ -64,19 +60,27 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
                 }
             })
 
+        viewModel.textFrom.observe(this, Observer {
+            updateCurrencyToInputField(editTextFrom, it)
+        })
+
+        viewModel.textTo.observe(this, Observer {
+            updateCurrencyToInputField(editTextTo, it)
+        })
+
         textChangedListenerTo = object : TextWatcher by TextChangeWatcher {
             override fun afterTextChanged(s: Editable?) {
-                convertRates(editTextTo, editTextFrom, s.toString(),countryNameTo, countryNameFrom, this)
+                viewModel.convertRates(Action.TO, s.toString())
             }
         }
 
-        textChangedListenerFrom = object : TextWatcher by TextChangeWatcher{
+        textChangedListenerFrom = object : TextWatcher by TextChangeWatcher {
             override fun afterTextChanged(s: Editable?) {
-                convertRates(editTextFrom, editTextTo, s.toString(),countryNameFrom, countryNameTo, this)
+                viewModel.convertRates(Action.FROM, s.toString())
             }
         }
-        viewBinding.editTextFrom.addTextChangedListener(textChangedListenerFrom)
-        viewBinding.editTextTo.addTextChangedListener(textChangedListenerTo)
+        editTextFrom.addTextChangedListener(textChangedListenerFrom)
+        editTextTo.addTextChangedListener(textChangedListenerTo)
 
         setupCurrencyRatesRecyclerview()
     }
@@ -91,38 +95,16 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         viewBinding.spinnerFrom.onItemSelectedListener = this
     }
 
-    private fun convertRates(edtFrom: EditText, edtTo: EditText, amountText: String,
-                             nameFrom: String, nameTo:String, listener: TextWatcher) {
-        val amountFrom = amountText.replace(",", "").toDoubleOrNull()
-
-        amountFrom?.let {
-            updateCurrencyToInputField(
-                edtFrom,
-                amountFrom,
-                "#,###",
-                listener
-            )
-            updateCurrencyToInputField(
-                edtTo, viewModel.getExchangedAmount(
-                    amountFrom.toString().toDouble(),
-                    from = nameFrom,
-                    to = nameTo
-                ), "#,###.00", getOtherListener(listener)
-            )
-        } ?: if (!TextUtils.isEmpty(edtTo.text)) {
-            edtTo.setText("")
-        }
-    }
-
-    private fun updateCurrencyToInputField(editText: EditText, amount: Double, format: String, listener: TextWatcher) {
+    private fun updateCurrencyToInputField(editText: EditText, text: String) {
+        val listener = getListener(editText)
         editText.removeTextChangedListener(listener)
-        editText.setText(DecimalFormat(format).format(amount).toString())
+        editText.setText(text)
         editText.setSelection(editText.text.length)
         editText.addTextChangedListener(listener)
     }
 
-    private fun getOtherListener(listener: TextWatcher): TextWatcher {
-        if (listener == textChangedListenerTo) {
+    private fun getListener(editText: EditText): TextWatcher {
+        if (editText == viewBinding.editTextFrom) {
             return textChangedListenerFrom
         }
 
@@ -150,16 +132,10 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (parent?.id == R.id.spinnerTo) {
-            countryNameTo = viewModel.getCurrencyRate(position)
+            viewModel.setCurrencyRate(Action.TO, position)
         } else if (parent?.id == R.id.spinnerFrom) {
-            countryNameFrom = viewModel.getCurrencyRate(position)
+            viewModel.setCurrencyRate(Action.FROM, position)
         }
-        resetInput()
-    }
-
-    private fun resetInput() {
-        viewBinding.editTextTo.text = null
-        viewBinding.editTextFrom.text = null
     }
 
     override fun onDestroy() {

@@ -4,12 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".main.MainActivity">
 
-<!--    <data>-->
-<!--        <variable-->
-<!--            name="vm"-->
-<!--            type="com.julkar.nain.currencyconverter.main.vm.MainViewModel" />-->
-<!--    </data>-->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -50,7 +44,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:digits="0,1,2,3,4,5,6,7,8,9"
-                        android:hint="From"
+                        android:hint="@string/from"
                         android:inputType="textMultiLine|numberDecimal"
                         android:maxLines="3" />
 
@@ -82,7 +76,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:digits="0,1,2,3,4,5,6,7,8,9"
-                        android:hint="To"
+                        android:hint="@string/to"
                         android:inputType="textMultiLine|numberDecimal"
                         android:maxLines="3" />
 
@@ -108,7 +102,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:text="Currency Rates(USD)"
+                    android:text="@string/currency_rates_usd"
                     android:textAlignment="center" />
 
                 <androidx.recyclerview.widget.RecyclerView

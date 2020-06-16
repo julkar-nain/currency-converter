@@ -1,6 +1,7 @@
 package com.julkar.nain.currencyconverter.main.vm
 
 import android.content.Context
+import android.text.TextUtils.isEmpty
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,6 +13,7 @@ import androidx.work.WorkManager
 import com.julkar.nain.currencyconverter.repository.ExchangeRatePersistentDataSource
 import com.julkar.nain.currencyconverter.service.Communicator.Communicator
 import com.julkar.nain.currencyconverter.service.scheduler.DataWorker
+import com.julkar.nain.currencyconverter.util.Action
 import com.julkar.nain.currencyconverter.util.WORK_NAME
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +33,11 @@ class MainViewModel constructor(
 
     private val currencyRatesMap = MutableLiveData<Map<String, Double>>()
     private val compositeDisposable = CompositeDisposable()
+    private var countryNameFrom: String = "USD"
+    private var countryNameTo: String = "USD"
+
+    val textFrom = MutableLiveData<String>()
+    val textTo = MutableLiveData<String>()
 
     init {
         communicator.observe(Map::class.java).subscribe {
@@ -53,8 +60,14 @@ class MainViewModel constructor(
         return currencyRatesMap
     }
 
-    fun getCurrencyRate(position: Int): String {
-        return currencyRatesMap.value?.keys?.elementAt(position)!!
+    fun setCurrencyRate(action: Action, position: Int){
+        if (action == Action.FROM) {
+            countryNameFrom = currencyRatesMap.value?.keys?.elementAt(position)!!
+        }else{
+            countryNameTo = currencyRatesMap.value?.keys?.elementAt(position)!!
+        }
+
+        textFrom.value?.let { convertRates(Action.FROM, it) }
     }
 
     fun getExchangedAmount(unExchanged: Double, from: String, to: String): Double {
@@ -72,6 +85,33 @@ class MainViewModel constructor(
     fun registerScheduler() {
         CoroutineScope(Dispatchers.IO).launch {
             setupRecurringWork()
+        }
+    }
+
+    fun convertRates(action: Action, amountText: String) {
+        val amountFrom = amountText.replace(",", "").toDoubleOrNull()
+
+        if (action == Action.FROM) {
+            postExchangeRate(textFrom, textTo, countryNameFrom, countryNameTo, amountFrom)
+        }else{
+            postExchangeRate(textTo, textFrom, countryNameTo, countryNameFrom, amountFrom)
+        }
+    }
+
+    private fun postExchangeRate(from: MutableLiveData<String>, to: MutableLiveData<String>, nameFrom: String, nameTo: String, amountFrom: Double?){
+        amountFrom?.let {
+            from.postValue(DecimalFormat("#,###").format(amountFrom))
+            to.postValue(
+                DecimalFormat("#,###.00").format(
+                    getExchangedAmount(
+                        amountFrom.toString().toDouble(),
+                        from = nameFrom,
+                        to = nameTo
+                    )
+                ).toString()
+            )
+        }?: if (!isEmpty(to.value)){
+            to.postValue("")
         }
     }
 
