@@ -27,8 +27,7 @@ class ExchangeRateDaoTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         appDatabase = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
         exchangeRateDao = appDatabase.exchangeRateDao()
-        val list = getDemoList()
-        exchangeRateDao.insert(list)
+        exchangeRateDao.insert(getDemoList())
     }
 
     @Test

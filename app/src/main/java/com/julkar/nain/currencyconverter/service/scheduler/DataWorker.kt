@@ -82,6 +82,8 @@ class DataWorker(val appContext: Context, params: WorkerParameters) :
                         Toast.LENGTH_LONG
                     ).show()
                     Log.d(TAG, it.toString())
+
+                    throw it
                 })
         )
     }
