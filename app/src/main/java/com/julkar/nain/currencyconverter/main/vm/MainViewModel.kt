@@ -55,7 +55,7 @@ class MainViewModel constructor(
             countryNameTo = currencyRatesMap.value?.keys?.elementAt(position)!!
         }
 
-        textFrom.value?.let { convertRates(Action.FROM, it) }
+        textFrom.value?.let { convertCurrency(Action.FROM, it) }
     }
 
     fun getExchangedAmount(unExchanged: Double, from: String, to: String): Double {
@@ -70,7 +70,7 @@ class MainViewModel constructor(
             ?.toList()!!
     }
 
-    fun convertRates(action: Action, amountText: String) {
+    fun convertCurrency(action: Action, amountText: String) {
         val amountFrom = amountText.replace(",", "").toDoubleOrNull()
 
         if (action == Action.FROM) {

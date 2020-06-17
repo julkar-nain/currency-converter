@@ -9,7 +9,8 @@ package com.julkar.nain.currencyconverter.util
 const val DATABASE_VERSION = 1
 
 //network
-const val ACCESS_KEY = "20f4dfdb79d18438565a696afae3f140"
+const val ACCESS_KEY = "77142508e2718519de72b3975f4eda0d"
+const val BASE_URL = "http://api.currencylayer.com"
 
 //scheduler
 const val WORK_NAME = "com.julkar.nain.currencyconverter.service.scheduler.DataWorker"

@@ -9,6 +9,7 @@ import com.julkar.nain.currencyconverter.domain.CurrencyRatesResponse
 import com.julkar.nain.currencyconverter.service.Communicator.Communicator
 import com.julkar.nain.currencyconverter.service.Communicator.CommunicatorImp
 import com.julkar.nain.currencyconverter.service.CurrencyRatesService
+import com.julkar.nain.currencyconverter.util.BASE_URL
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.internal.operators.flowable.FlowableBlockingSubscribe.subscribe
@@ -42,7 +43,7 @@ class ExchangeRateNetworkDataSourceTest {
 
     @Before
     fun setUp() {
-        retrofit = Retrofit.Builder().baseUrl(AppModule.BASE_URL)
+        retrofit = Retrofit.Builder().baseUrl(BASE_URL)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build()

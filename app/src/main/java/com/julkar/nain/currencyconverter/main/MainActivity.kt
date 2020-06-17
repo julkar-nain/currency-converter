@@ -72,13 +72,13 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
 
         textChangedListenerTo = object : TextWatcher by TextChangeWatcher {
             override fun afterTextChanged(s: Editable?) {
-                viewModel.convertRates(Action.TO, s.toString())
+                viewModel.convertCurrency(Action.TO, s.toString())
             }
         }
 
         textChangedListenerFrom = object : TextWatcher by TextChangeWatcher {
             override fun afterTextChanged(s: Editable?) {
-                viewModel.convertRates(Action.FROM, s.toString())
+                viewModel.convertCurrency(Action.FROM, s.toString())
             }
         }
         editTextFrom.addTextChangedListener(textChangedListenerFrom)

@@ -7,6 +7,7 @@ import com.julkar.nain.currencyconverter.database.AppDatabase
 import com.julkar.nain.currencyconverter.database.dao.ExchangeRateDao
 import com.julkar.nain.currencyconverter.service.Communicator.Communicator
 import com.julkar.nain.currencyconverter.service.CurrencyRatesService
+import com.julkar.nain.currencyconverter.util.BASE_URL
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -22,10 +23,6 @@ import com.julkar.nain.currencyconverter.service.Communicator.CommunicatorImp as
  */
 @Module
 class AppModule {
-
-    companion object{
-        val BASE_URL = "http://api.currencylayer.com"
-    }
 
     @Singleton
     @Provides

@@ -112,7 +112,7 @@ class MainViewModelTest {
         mainViewModel.setCurrencyRate(Action.TO, 0)
         mainViewModel.textTo.observeForever(observer)
 
-        mainViewModel.convertRates(Action.FROM, "100")
+        mainViewModel.convertCurrency(Action.FROM, "100")
 
         val captor = ArgumentCaptor.forClass(String::class.java)
         captor.run {
