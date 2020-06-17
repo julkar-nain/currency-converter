@@ -1,6 +1,5 @@
 package com.julkar.nain.currencyconverter.repository
 
-import com.julkar.nain.currencyconverter.application.di.ActivityScope
 import com.julkar.nain.currencyconverter.database.dao.ExchangeRateDao
 import com.julkar.nain.currencyconverter.database.entity.ExchangeRate
 import javax.inject.Inject
@@ -19,5 +18,9 @@ class ExchangeRatePersistentDataSource @Inject constructor(private val exchangeR
 
     suspend fun saveExchangeRates(rates: List<ExchangeRate>) {
         exchangeRateDao.insert(rates)
+    }
+
+    suspend fun getExchangeRate(countryName: String) : Double{
+        return exchangeRateDao.findExchangeRateByCountryName(countryName)
     }
 }
