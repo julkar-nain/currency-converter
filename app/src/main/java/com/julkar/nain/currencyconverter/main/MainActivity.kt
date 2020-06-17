@@ -50,6 +50,8 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
 
         viewModel = ViewModelProvider(this, modelFactory).get(MainViewModel::class.java)
 
+        viewModel.registerScheduler()
+
         viewModel.fetchCurrencyData().observe(this,
             Observer { list ->
                 list?.let {
