@@ -52,7 +52,7 @@ class AppModule {
     @Singleton
     @Provides
     fun provideRetrofitService(retrofit: Retrofit): CurrencyRatesService {
-        return retrofit.create<CurrencyRatesService>(CurrencyRatesService::class.java)
+        return retrofit.create(CurrencyRatesService::class.java)
     }
 
     @Singleton

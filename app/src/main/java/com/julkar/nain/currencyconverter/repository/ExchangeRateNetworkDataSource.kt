@@ -1,6 +1,5 @@
 package com.julkar.nain.currencyconverter.repository
 
-import com.julkar.nain.currencyconverter.application.di.ActivityScope
 import com.julkar.nain.currencyconverter.domain.CurrencyRatesResponse
 import com.julkar.nain.currencyconverter.service.CurrencyRatesService
 import com.julkar.nain.currencyconverter.util.ACCESS_KEY
