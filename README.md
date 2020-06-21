@@ -1,6 +1,6 @@
 currency-converter
 =================================
-This is an andorid application that helps to calculate currency exchange easily.
+This is an andorid application that helps to calculate currency exchange. The app is a kind of sample app that demostrates latest technology(Room, Dagger, retrofit, wrok manager etc) with porper unit tests. You can easily understand how these latest technologies can be used to build an esily maintainable android app.
 ## Feature
 It provides the following features :
 
